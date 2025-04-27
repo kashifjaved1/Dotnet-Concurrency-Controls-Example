@@ -1,0 +1,77 @@
+﻿@model Dotnet_Concurrency_Controls.Data.Entities.Booking;
+
+<!-- Fixed alert class and structure -->
+<div id="lockWarning" class="alert alert-warning d-none">
+    This booking is currently locked by <span id="lockOwner"></span>
+</div>
+
+<!-- Fixed form with proper validation and attributes -->
+<form asp-action="Edit">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="RowVersion" />
+
+    <div class="form-group">
+        <label asp-for="GuestName" class="control-label"></label>
+        <input asp-for="GuestName" class="form-control" />
+        <span asp-validation-for="GuestName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CheckInDate" class="control-label"></label>
+        <input asp-for="CheckInDate" class="form-control" type="date" />
+        <span asp-validation-for="CheckInDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CheckOutDate" class="control-label"></label>
+        <input asp-for="CheckOutDate" class="form-control" type="date" />
+        <span asp-validation-for="CheckOutDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+</form>
+
+@section Scripts {
+    <!-- Fixed SignalR path -->
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/bookingHub")
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        connection.on("LockUpdated", async (bookingId) => {
+            if (bookingId === @Model.Id) {
+                const response = await fetch(`/api/lockstatus/${bookingId}`);
+                const data = await response.json();
+                
+                const warningElement = document.getElementById('lockWarning');
+                const ownerElement = document.getElementById('lockOwner');
+                
+                if (data.isLocked) {
+                    warningElement.classList.remove('d-none');
+                    ownerElement.textContent = data.lockedBy;
+                } else {
+                    warningElement.classList.add('d-none');
+                }
+            }
+        });
+
+        async function startConnection() {
+            try {
+                await connection.start();
+                console.log("SignalR Connected.");
+                await connection.invoke("SubscribeToLock", @Model.Id);
+            } catch (err) {
+                console.log(err);
+                setTimeout(startConnection, 5000);
+            }
+        };
+
+        startConnection();
+    </script>
+}

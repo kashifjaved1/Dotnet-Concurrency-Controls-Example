@@ -1,0 +1,36 @@
+﻿@model Dotnet_Concurrency_Controls.Data.Entities.Booking
+
+@{
+    ViewData["Title"] = "Booking Details";
+}
+
+<h1>Booking Details</h1>
+
+<div>
+    <h4>Booking</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.GuestName)</dt>
+        <dd class="col-sm-10">@Model.GuestName</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.CheckInDate)</dt>
+        <dd class="col-sm-10">@Model.CheckInDate.ToShortDateString()</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.CheckOutDate)</dt>
+        <dd class="col-sm-10">@Model.CheckOutDate.ToShortDateString()</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.LockedBy)</dt>
+        <dd class="col-sm-10">@Model.LockedBy</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.LockExpiry)</dt>
+        <dd class="col-sm-10">@Model.LockExpiry?.ToString("g")</dd>
+
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.LockType)</dt>
+        <dd class="col-sm-10">@Model.LockType</dd>
+    </dl>
+</div>
+
+<div class="mt-3">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</div>

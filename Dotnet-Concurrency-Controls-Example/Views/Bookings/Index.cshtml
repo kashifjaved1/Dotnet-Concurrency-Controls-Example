@@ -1,0 +1,40 @@
+﻿@model IEnumerable<Dotnet_Concurrency_Controls.Data.Entities.Booking>
+
+@{
+    ViewData["Title"] = "Bookings";
+}
+
+<h1>
+    Bookings <a style="float: right" asp-action="Create" class="btn btn-primary">Create Booking</a>
+</h1> 
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>@Html.DisplayNameFor(model => model.First().GuestName)</th>
+        <th>@Html.DisplayNameFor(model => model.First().CheckInDate)</th>
+        <th>@Html.DisplayNameFor(model => model.First().CheckOutDate)</th>
+        <th>@Html.DisplayNameFor(model => model.First().LockedBy)</th>
+        <th>@Html.DisplayNameFor(model => model.First().LockExpiry)</th>
+        <th>@Html.DisplayNameFor(model => model.First().LockType)</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>@item.GuestName</td>
+            <td>@item.CheckInDate.ToShortDateString()</td>
+            <td>@item.CheckOutDate.ToShortDateString()</td>
+            <td>@item.LockedBy</td>
+            <td>@(item.LockExpiry?.ToString("g") ?? "N/A")</td>
+            <td>@item.LockType</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
